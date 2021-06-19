@@ -22,13 +22,21 @@ module.exports.deleteCardById = (req, res) => {
 };
 
 module.exports.putLikeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId)
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
     .then((card) => res.status(200).send({ card }))
     .catch((err) => res.send({ message: `${err}` }));
 };
 
 module.exports.deleteLikeCard = (req, res) => {
-  Card.findOneAndUpdate(req.params.cardId)
+  Card.findOneAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
     .then((card) => res.status(200).send({ card }))
     .catch((err) => res.send({ message: `${err}` }));
 };
