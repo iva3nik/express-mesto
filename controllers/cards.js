@@ -22,6 +22,7 @@ module.exports.createNewCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_CODE_INCORRET_DATA).send({ message: 'Переданы некорректиные данные при создании карточки' });
+        return;
       }
 
       res.status(ERROR_CODE_DEFAULT_MISTAKE).send({ message: 'На сервере произошла ошибка' });
@@ -30,10 +31,14 @@ module.exports.createNewCard = (req, res) => {
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail(() => {
+      res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найдена' });
+    })
     .then((card) => res.status(200).send({ card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найдена' });
+        res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Передан некоректный _id для удаления карточки' });
+        return;
       }
 
       res.status(ERROR_CODE_DEFAULT_MISTAKE).send({ message: 'На сервере произошла ошибка' });
@@ -46,10 +51,14 @@ module.exports.putLikeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найдена' });
+    })
     .then((card) => res.status(200).send({ card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(ERROR_CODE_INCORRET_DATA).send({ message: 'Переданы некорректиные данные для постановки лайка' });
+        return;
       }
 
       res.status(ERROR_CODE_DEFAULT_MISTAKE).send({ message: 'На сервере произошла ошибка' });
@@ -62,10 +71,14 @@ module.exports.deleteLikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найдена' });
+    })
     .then((card) => res.status(200).send({ card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE_INCORRET_DATA).send({ message: 'Переданы некорректиные данные для снятия лайка' });
+      if (err.name === 'CastError') {
+        res.status(ERROR_CODE_INCORRET_DATA).send({ message: 'Переданы некорректные данные для снятия лайка' });
+        return;
       }
 
       res.status(ERROR_CODE_DEFAULT_MISTAKE).send({ message: 'На сервере произошла ошибка' });
