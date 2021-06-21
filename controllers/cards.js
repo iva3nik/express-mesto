@@ -32,7 +32,7 @@ module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => res.status(200).send({ card }))
     .catch((err) => {
-      if (err === 'CastError') {
+      if (err.name === 'CastError') {
         res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка по указанному _id не найдена' });
       }
 
