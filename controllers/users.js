@@ -1,10 +1,24 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   ERROR_CODE_INCORRET_DATA,
   ERROR_CODE_NOT_FOUND,
   ERROR_CODE_DEFAULT_MISTAKE,
 } = require('../utils/constants');
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'secret', { expiresIn: '7d' });
+      res.send({ token });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.meaasge });
+    });
+};
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -34,6 +48,7 @@ module.exports.createNewUser = (req, res) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
+  // eslint-disable-next-line no-console
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
