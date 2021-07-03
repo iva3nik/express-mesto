@@ -38,11 +38,21 @@ module.exports.createNewUser = (req, res) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(201).send({ user }))
+    .then((user) => res.status(201).send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+      _id: user._id,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_CODE_INCORRET_DATA).send({ message: 'Переданы некорректиные данные при создании пользователя' });
         return;
+      }
+
+      if (err.name === 'MongoError' && err.code === 11000) {
+        res.send({ message: 'Пользователь с указанным email уже существует' });
       }
 
       res.status(ERROR_CODE_DEFAULT_MISTAKE).send({ message: 'На сервере произошла ошибка' });

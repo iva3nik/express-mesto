@@ -16,6 +16,21 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+async function start() {
+  try {
+    app.listen(PORT);
+    await mongoose.connect('mongodb://localhost:27017/mestodb', {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true,
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Init application error: ${error}`);
+  }
+}
+
 app.use((req, res, next) => {
   req.user = {
     _id: '60cda4bc0416c67d5b93462c',
@@ -31,4 +46,4 @@ app.use((req, res) => {
   res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Нет такой страницы' });
 });
 
-app.listen(PORT);
+start();
