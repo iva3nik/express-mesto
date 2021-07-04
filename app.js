@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const auth = require('./middlewares/auth');
-const { ERROR_CODE_NOT_FOUND } = require('./utils/constants');
+const { login, createNewUser } = require('./controllers/users');
+const NotFoundError = require('./errors/not-found-err');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -32,19 +33,25 @@ async function start() {
   }
 }
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '60cda4bc0416c67d5b93462c',
-  };
-
-  next();
-});
+// eslint-disable-next-line no-undef
+app.post('/signin', login);
+// eslint-disable-next-line no-undef
+app.post('/signup', createNewUser);
 
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use((req, res) => {
-  res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Нет такой страницы' });
+app.use('/', (req, res, next) => {
+  next(new NotFoundError('Нет такой страницы'));
+});
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  res.status(err.statusCode).send({
+    message: err.statusCode === 500
+      ? 'На сервере произошла ошибка'
+      : err.message,
+  });
 });
 
 start();
