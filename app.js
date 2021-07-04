@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
+const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { login, createNewUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-err');
@@ -55,6 +56,8 @@ app.post('/signup', celebrate({
 
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
+
+app.use(errors());
 
 app.use('/', (req, res, next) => {
   next(new NotFoundError('Нет такой страницы'));
