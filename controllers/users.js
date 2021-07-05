@@ -5,6 +5,7 @@ const IncorrectDataError = require('../errors/incorrect-data-err');
 const AuthentificationError = require('../errors/authentification-err');
 const ConflictingRequestError = require('../errors/conflicting-request-err');
 const NotFoundError = require('../errors/not-found-err');
+
 const { JWT_SECRET } = require('../utils/constants');
 
 module.exports.login = (req, res, next) => {
@@ -45,12 +46,12 @@ module.exports.getUsers = (req, res, next) => {
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      throw new NotFoundError('Пользователь по указанному _id не найден 123');
+      throw new NotFoundError('Пользователь по указанному _id не найден');
     })
     .then((user) => res.status(200).send({ user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new NotFoundError('Пользователь по указанному _id не найден 1234');
+        throw new NotFoundError('Пользователь по указанному _id не найден');
       }
     })
     .catch(next);
