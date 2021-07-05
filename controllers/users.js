@@ -31,7 +31,7 @@ module.exports.getInfoAboutUser = (req, res, next) => {
         throw new NotFoundError('Пользователь по указанному _id не найден');
       }
 
-      return res.status(200).send(user);
+      return res.status(200).send({ user });
     })
     .catch(next);
 };
@@ -45,12 +45,12 @@ module.exports.getUsers = (req, res, next) => {
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      throw new NotFoundError('Пользователь по указанному _id не найден');
+      throw new NotFoundError('Пользователь по указанному _id не найден 123');
     })
     .then((user) => res.status(200).send({ user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new NotFoundError('Пользователь по указанному _id не найден');
+        throw new NotFoundError('Пользователь по указанному _id не найден 1234');
       }
     })
     .catch(next);
