@@ -5,14 +5,19 @@ const IncorrectDataError = require('../errors/incorrect-data-err');
 const AuthentificationError = require('../errors/authentification-err');
 const ConflictingRequestError = require('../errors/conflicting-request-err');
 const NotFoundError = require('../errors/not-found-err');
+const { JWT_SECRET } = require('../utils/constants');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'secret', { expiresIn: '7d' });
-      res.send({ token });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
+        .end();
     })
     .catch(() => {
       next(new AuthentificationError('Неправильный email или password'));
