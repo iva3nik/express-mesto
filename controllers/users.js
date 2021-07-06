@@ -17,8 +17,8 @@ module.exports.login = (req, res, next) => {
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
-      })
-        .end();
+      });
+      res.status(200).send({ token });
     })
     .catch(() => {
       next(new AuthentificationError('Неправильный email или password'));
