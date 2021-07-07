@@ -7,6 +7,7 @@ const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { login, createNewUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-err');
+const { ValidationLinkMethod } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -43,7 +44,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().custom(ValidationLinkMethod),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(7),
   }).unknown(true),
