@@ -50,7 +50,9 @@ module.exports.getUserById = (req, res, next) => {
     })
     .then((user) => res.status(200).send({ user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.message === 'Пользователь по указанному _id не найден') {
+        throw new NotFoundError('Пользователь по указанному _id не найден');
+      } else if (err.name === 'CastError') {
         throw new NotFoundError('Пользователь по указанному _id не найден');
       }
     })
@@ -101,11 +103,11 @@ module.exports.updateDataUser = (req, res, next) => {
     })
     .then((user) => res.status(200).send({ user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.message === 'Пользователь по указанному _id не найден') {
+        throw new NotFoundError('Пользователь по указанному _id не найден');
+      } else if (err.name === 'ValidationError') {
         throw new IncorrectDataError('Переданы некорректные данные при обновлении профиля');
-      }
-
-      if (err.name === 'CastError') {
+      } else if (err.name === 'CastError') {
         throw new NotFoundError('Передан некоректный _id пользователя при обновлении профиля');
       }
     })
@@ -128,11 +130,11 @@ module.exports.updateAvatarUser = (req, res, next) => {
     })
     .then((user) => res.status(200).send({ user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.message === 'Пользователь по указанному _id не найден') {
+        throw new NotFoundError('Пользователь по указанному _id не найден');
+      } else if (err.name === 'ValidationError') {
         throw new IncorrectDataError('Переданы некорректные данные при обновлении аватара');
-      }
-
-      if (err.name === 'CastError') {
+      } else if (err.name === 'CastError') {
         throw new NotFoundError('Передан некоректный _id пользователя при обновлении аватара');
       }
     })
