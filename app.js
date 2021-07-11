@@ -8,6 +8,7 @@ const auth = require('./middlewares/auth');
 const { login, createNewUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-err');
 const { ValidationLinkMethod } = require('./utils/constants');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -31,6 +32,8 @@ async function start() {
   }
 }
 
+app.use(requestLogger);
+
 // eslint-disable-next-line no-undef
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -52,6 +55,8 @@ app.post('/signup', celebrate({
 
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
+
+app.use(errorLogger);
 
 app.use(errors());
 
