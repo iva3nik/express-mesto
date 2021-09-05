@@ -1,6 +1,6 @@
 # Проект Mesto фронтенд + бэкенд
 
-# Cтек: JavaScript / React.js / HTML / CSS / Node.js / MongoDB / Git / Figma
+Cтек: JavaScript / React.js / Node.js / MongoDB / Git
 В этой проектной работе началась реализация бэкенда для приложения Mesto. Создано приложение на Express.
 
 `/routes` — папка с файлами роутера  
